@@ -6,3 +6,72 @@ available in the app when your plugin is enabled.
 If your plugin does not need CSS, delete this file.
 
 */
+.inline-card {
+	background-color: rgb(244 244 245);
+	padding-top: 1px;
+	padding-bottom: 1px;
+	padding-left: var(--size-4-2);
+	padding-right: var(--size-4-2);
+	border-radius: var(--radius-s);
+
+	display: inline-flex;
+
+	cursor: pointer;
+
+	&:hover {
+		background-color: rgb(243 244 246);
+	}
+}
+
+.inline-card .inline-card-icon, .inline-card .inline-input-icon, .inline-card .inline-input-correct-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.inline-card .inline-card-mask, .inline-card .inline-input-mask {
+	font-size: calc(var(--font-text-size) * 0.9);
+	text-align: center;
+	max-width: 5rem;
+}
+
+.inline-card .inline-input-mask {
+	height: 18px;
+	border-top: unset;
+	border-left: unset;
+	border-right: unset;
+	border-bottom: 1px dashed var(--color-base-30);
+}
+
+.inline-card .inline-card-icon svg, .inline-card .inline-input-icon svg {
+	width: calc(var(--font-text-size) * 0.8);
+	height: calc(var(--font-text-size) * 0.8);
+	margin-right: var(--size-2-2);
+}
+
+.inline-card .inline-input-correct-icon svg {
+	width: calc(var(--font-text-size) * 0.8);
+	height: calc(var(--font-text-size) * 0.8);
+	margin-left: var(--size-2-2);
+}
+
+.inline-mask-card-popover {
+	display: flex;
+	align-items: center;
+
+	justify-content: center;
+}
+
+.popover.hover-popover.inline-mask-card-popover {
+	padding: 1rem;
+	max-height: 20em;
+	overflow-x: auto;
+	font-size: calc(var(--font-text-size) * 0.9);
+
+	width: 20rem;
+}
+
+.popover.hover-popover.inline-mask-card-popover p {
+	margin-block-end: 0.2rem;
+	margin-block-start: 0.2rem;
+}
