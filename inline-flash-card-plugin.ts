@@ -23,7 +23,7 @@ function createSpan() {
 function updateHoverSpan(span: HTMLElement, text: string) {
 	span.toggleClass('inline-card', true);
 	const iconEl = span.createEl("span", {cls: "inline-card-icon"});
-	span.createEl("span", {cls: "inline-card-mask", text: 'Card'});
+	span.createEl("span", {cls: "inline-card-mask", text: '?'});
 
 	setIcon(iconEl, "venetian-mask");
 }
@@ -106,6 +106,15 @@ function createPopover(plugin: InlineFlashCardPlugin, view: EditorView, ev: Mous
 	});
 }
 
+function revealCard(view: EditorView, to: number) {
+	view.dispatch({
+		selection: {
+			anchor: to - 2,
+			head: to - 2,
+		}
+	});
+}
+
 class InlineMaskWidget extends WidgetType {
 	public error = false;
 	private container: HTMLElement = createSpan();
@@ -123,12 +132,7 @@ class InlineMaskWidget extends WidgetType {
 
 			this.container.onclick = (ev) => {
 				ev.preventDefault();
-				this.view.dispatch({
-					selection: {
-						anchor: this.to - 2,
-						head: this.to - 2,
-					}
-				});
+				revealCard(this.view, this.to);
 			};
 
 
@@ -140,12 +144,7 @@ class InlineMaskWidget extends WidgetType {
 
 			this.container.ondblclick = (ev) => {
 				ev.preventDefault();
-				this.view.dispatch({
-					selection: {
-						anchor: this.to - 2,
-						head: this.to - 2,
-					}
-				});
+				revealCard(this.view, this.to);
 			};
 		}
 	}
