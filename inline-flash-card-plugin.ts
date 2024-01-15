@@ -10,7 +10,7 @@ import {
 	WidgetType
 } from "@codemirror/view";
 import { editorInfoField, editorLivePreviewField, HoverPopover, MarkdownRenderer, setIcon, setTooltip } from "obsidian";
-import MyPlugin from "./main";
+import InlineFlashCardPlugin from "./main";
 
 interface DecoSpec {
 	widget?: InlineMaskWidget;
@@ -60,13 +60,59 @@ function updateInputSpan(span: HTMLElement, text: string) {
 	};
 }
 
+function createPopover(plugin: InlineFlashCardPlugin, view: EditorView, ev: MouseEvent, href: string) {
+
+	const hoverPopover = new HoverPopover(
+		<any>view,
+		<HTMLElement>ev.target,
+		100,
+	);
+
+	const field = view.state.field(editorInfoField);
+
+	hoverPopover.hoverEl.toggleClass("inline-mask-card-popover", true);
+	MarkdownRenderer.render(
+		plugin.app,
+		href.replace(/::/g, ""),
+		hoverPopover.hoverEl,
+		<string>field?.file?.path,
+		hoverPopover,
+	);
+
+	const embeds =
+		hoverPopover.hoverEl?.querySelectorAll(".internal-link");
+	embeds?.forEach((embed) => {
+		const el = embed as HTMLAnchorElement;
+		const href = el.getAttribute("data-href");
+		if (!href) return;
+
+		const destination = field.app.metadataCache.getFirstLinkpathDest(
+			href,
+			<string>field?.file?.path,
+		);
+		if (!destination) embed.classList.add("is-unresolved");
+
+		plugin.registerDomEvent(el, "mouseover", (e) => {
+			e.stopPropagation();
+			field.app.workspace.trigger("hover-link", {
+				event: e,
+				source: "markdown",
+				hoverParent: hoverPopover.hoverEl,
+				targetEl: el,
+				linktext: href,
+				sourcePath: el.href,
+			});
+		});
+	});
+}
+
 class InlineMaskWidget extends WidgetType {
 	public error = false;
 	private container: HTMLElement = createSpan();
 
 	constructor(
 		public readonly view: EditorView,
-		public readonly plugin: MyPlugin,
+		public readonly plugin: InlineFlashCardPlugin,
 		public readonly href: string,
 		public readonly to: number,
 	) {
@@ -85,50 +131,9 @@ class InlineMaskWidget extends WidgetType {
 				});
 			};
 
+
 			this.container.onmouseover = (ev) => {
-				if (!ev.ctrlKey && !ev.metaKey) return;
-				const hoverPopover = new HoverPopover(
-					<any>this.view,
-					<HTMLElement>ev.target,
-					100,
-				);
-
-				const field = this.view.state.field(editorInfoField);
-
-				hoverPopover.hoverEl.toggleClass("inline-mask-card-popover", true);
-				MarkdownRenderer.render(
-					this.plugin.app,
-					href.replace(/::/g, ""),
-					hoverPopover.hoverEl,
-					<string>field?.file?.path,
-					hoverPopover,
-				);
-
-				const embeds =
-					hoverPopover.hoverEl?.querySelectorAll(".internal-link");
-				embeds?.forEach((embed) => {
-					const el = embed as HTMLAnchorElement;
-					const href = el.getAttribute("data-href");
-					if (!href) return;
-
-					const destination = field.app.metadataCache.getFirstLinkpathDest(
-						href,
-						<string>field?.file?.path,
-					);
-					if (!destination) embed.classList.add("is-unresolved");
-
-					this.plugin.registerDomEvent(el, "mouseover", (e) => {
-						e.stopPropagation();
-						field.app.workspace.trigger("hover-link", {
-							event: e,
-							source: "markdown",
-							hoverParent: hoverPopover.hoverEl,
-							targetEl: el,
-							linktext: href,
-							sourcePath: el.href,
-						});
-					});
-				});
+				createPopover(this.plugin, this.view, ev, href);
 			};
 		} else {
 			updateInputSpan(this.container, href);
@@ -154,7 +159,7 @@ class InlineMaskWidget extends WidgetType {
 	}
 }
 
-export function createInlineMaskViewPlugin(_plugin: MyPlugin) {
+export function createInlineMaskViewPlugin(_plugin: InlineFlashCardPlugin) {
 	class InlineViewPluginValue implements PluginValue {
 		public readonly view: EditorView;
 		private readonly match = new MatchDecorator({

@@ -1,12 +1,13 @@
 import { Plugin } from 'obsidian';
-import { createInlineMaskViewPlugin } from "./inline-mask-view-plugin";
+import { createInlineMaskViewPlugin } from "./inline-flash-card-plugin";
 
-const inlineHoverPopover = "inline-mask:card-preview";
+const inlineHoverPopover = "inline-flash-card:card-preview";
 
-export default class MyPlugin extends Plugin {
+export default class InlineFlashCardPlugin extends Plugin {
 
 	async onload() {
 		this.registerEditorExtension([createInlineMaskViewPlugin(this)]);
+		// @ts-ignore
 		this.app.workspace.registerHoverLinkSource(inlineHoverPopover, {display: 'Inline Mask', defaultMod: true});
 	}
 

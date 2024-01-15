@@ -19,9 +19,18 @@ If your plugin does not need CSS, delete this file.
 	cursor: pointer;
 
 	&:hover {
-		background-color: rgb(243 244 246);
+		background-color: #d2daeb;
 	}
 }
+
+.theme-dark .inline-card {
+	background-color: rgb(40 40 40);
+
+	&:hover {
+		background-color: rgb(40 40 40);
+	}
+}
+
 
 .inline-card .inline-card-icon, .inline-card .inline-input-icon, .inline-card .inline-input-correct-icon {
 	display: flex;
