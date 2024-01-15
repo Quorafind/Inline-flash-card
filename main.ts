@@ -1,6 +1,6 @@
 import { Plugin } from 'obsidian';
 import { createInlineMaskViewPlugin } from "./inline-flash-card-plugin";
-import { highlightTextInElement, rules } from "./inline-flash-card-marker";
+import { createReadModePopover, highlightTextInElement, rules } from "./inline-flash-card-marker";
 
 const inlineHoverPopover = "inline-flash-card:card-preview";
 
@@ -16,6 +16,7 @@ export default class InlineFlashCardPlugin extends Plugin {
 		this.registerCommands();
 		// @ts-ignore
 		this.app.workspace.registerHoverLinkSource(inlineHoverPopover, {display: 'Inline Mask', defaultMod: true});
+		this.registerHoverEvents();
 	}
 
 	registerCommands() {
@@ -53,6 +54,18 @@ export default class InlineFlashCardPlugin extends Plugin {
 
 				editor.replaceSelection(`${hasBlankBefore ? '' : ' '}>>${editor.getSelection()}<<${hasBlankAfter ? '' : ' '}`);
 			}
+		});
+	}
+
+	registerHoverEvents() {
+		this.registerDomEvent(document, 'mouseover', (e) => {
+			if (!e.target) return;
+			if (!(e.target as HTMLElement).closest('.read-mode.inline-card')) return;
+			const parent = (e.target as HTMLElement).closest('.read-mode.inline-card');
+			const content = parent?.getAttribute('data-href');
+			const path = parent?.getAttribute('data-path');
+			if (!content || !path) return;
+			createReadModePopover(this, path, e, content);
 		});
 	}
 

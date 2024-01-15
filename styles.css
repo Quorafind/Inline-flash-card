@@ -8,8 +8,7 @@ If your plugin does not need CSS, delete this file.
 */
 .inline-card {
 	background-color: rgb(244 244 245);
-	padding-top: 1px;
-	padding-bottom: 1px;
+
 	padding-left: var(--size-4-2);
 	padding-right: var(--size-4-2);
 	border-radius: var(--radius-s);

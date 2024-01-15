@@ -21,7 +21,12 @@ type ReplacementElementCreator = ({matchedText, ctx, plugin}: {
 	matchedText: string, plugin: InlineFlashCardPlugin, ctx: MarkdownPostProcessorContext
 }) => HTMLElement;
 
-export function createReadModePopover(plugin: InlineFlashCardPlugin, ctx: MarkdownPostProcessorContext, ev: MouseEvent, href: string) {
+
+// export const debounceHover = debounce((plugin: InlineFlashCardPlugin, path: string, ev: MouseEvent, content: string) => {
+// 	createReadModePopover(plugin, path, ev, content);
+// }, 200, true);
+
+export function createReadModePopover(plugin: InlineFlashCardPlugin, path: string, ev: MouseEvent, content: string) {
 
 	const hoverPopover = new HoverPopover(
 		<any>plugin.app,
@@ -29,13 +34,12 @@ export function createReadModePopover(plugin: InlineFlashCardPlugin, ctx: Markdo
 		100,
 	);
 
-
 	hoverPopover.hoverEl.toggleClass("inline-mask-card-popover", true);
 	MarkdownRenderer.render(
 		plugin.app,
-		href.replace(/::/g, ""),
+		content.replace(/::/g, ""),
 		hoverPopover.hoverEl,
-		<string>ctx.sourcePath,
+		<string>path,
 		hoverPopover,
 	);
 
@@ -48,7 +52,7 @@ export function createReadModePopover(plugin: InlineFlashCardPlugin, ctx: Markdo
 
 		const destination = plugin.app.metadataCache.getFirstLinkpathDest(
 			href,
-			<string>ctx.sourcePath,
+			<string>path,
 		);
 		if (!destination) embed.classList.add("is-unresolved");
 
@@ -75,6 +79,7 @@ function createHoverSpan(
 	const parentEl = createEl('span');
 	parentEl.toggleClass('read-mode', true);
 	parentEl.setAttribute('data-href', word);
+	parentEl.setAttribute('data-path', ctx.sourcePath);
 
 	updateHoverSpan(parentEl, word);
 
@@ -186,12 +191,8 @@ function replaceTextWithElements(plugin: InlineFlashCardPlugin, ctx: MarkdownPos
 				Array.from(newNode.childNodes).forEach((child) => {
 					const childNode = child.cloneNode(true);
 					node.parentNode?.insertBefore(childNode, node);
-					if (child && (childNode as HTMLElement).className && (childNode as HTMLElement).className.contains('read-mode')) {
-						(childNode as HTMLElement).onmouseover = (ev) => {
-							const content = (childNode as HTMLElement).getAttribute('data-href');
-							createReadModePopover(plugin, ctx, ev, content || child.textContent || '');
-						};
-					} else if (child && (childNode as HTMLElement).className && (childNode as HTMLElement).className.contains('input-mode')) {
+					console.log(childNode);
+					if (child && (childNode as HTMLElement).className && (childNode as HTMLElement).className.contains('input-mode')) {
 						(childNode as HTMLElement).find('input').oninput = (ev) => {
 							const value = (<HTMLInputElement>ev.target).value;
 							const content = (childNode as HTMLElement).getAttribute('data-href');
@@ -209,6 +210,7 @@ function replaceTextWithElements(plugin: InlineFlashCardPlugin, ctx: MarkdownPos
 				});
 
 			} else {
+				console.log(newNode);
 				node.parentNode?.insertBefore(newNode.cloneNode(true), node);
 			}
 		});
