@@ -162,7 +162,7 @@ export function createInlineMaskViewPlugin(_plugin: InlineFlashCardPlugin) {
 	class InlineViewPluginValue implements PluginValue {
 		public readonly view: EditorView;
 		private readonly match = new MatchDecorator({
-			regexp: /(:{2}(.*?):{2}|>{2}(.*?)<{2})/g,
+			regexp: /(:{2}([^:\[\]]*?):{2}|>{2}(.*?)<{2})/g,
 			decorate: (add, from: number, to: number, match: RegExpExecArray, view: EditorView) => {
 				const shouldRender = this.shouldRender(view, from, to);
 				if (shouldRender) {

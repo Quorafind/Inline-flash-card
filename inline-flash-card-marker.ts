@@ -125,7 +125,7 @@ function isInsidePre(node: Node) {
 export const rules: HighlightRule[] = [
 	{
 		regexMode: 'gu',
-		regexPattern: ':{2}(.*?):{2}',
+		regexPattern: ':{2}([^:\\[\\]]*?):{2}',
 		creator: ({matchedText, ctx, plugin}) => {
 			const targetString = matchedText.replace(/::/g, '');
 
