@@ -20,7 +20,7 @@ function createSpan() {
 	return createEl("span");
 }
 
-function updateHoverSpan(span: HTMLElement, text: string) {
+export function updateHoverSpan(span: HTMLElement, text: string) {
 	span.toggleClass('inline-card', true);
 	const iconEl = span.createEl("span", {cls: "inline-card-icon"});
 	span.createEl("span", {cls: "inline-card-mask", text: '?'});
@@ -28,7 +28,7 @@ function updateHoverSpan(span: HTMLElement, text: string) {
 	setIcon(iconEl, "venetian-mask");
 }
 
-function updateInputSpan(span: HTMLElement, text: string) {
+export function updateInputSpan(span: HTMLElement, text: string) {
 	span.toggleClass('inline-card', true);
 	const iconEl = span.createEl("span", {cls: "inline-input-icon"});
 	setIcon(iconEl, "pencil");
@@ -44,7 +44,7 @@ function updateInputSpan(span: HTMLElement, text: string) {
 
 	inputEl.oninput = (ev) => {
 		const value = (<HTMLInputElement>ev.target).value;
-		console.log(value);
+
 		if (value === '') {
 			inputEl.placeholder = 'input answer';
 			correctIconEl.empty();
@@ -60,7 +60,7 @@ function updateInputSpan(span: HTMLElement, text: string) {
 	};
 }
 
-function createPopover(plugin: InlineFlashCardPlugin, view: EditorView, ev: MouseEvent, href: string) {
+export function createPopover(plugin: InlineFlashCardPlugin, view: EditorView, ev: MouseEvent, href: string) {
 
 	const hoverPopover = new HoverPopover(
 		<any>view,
