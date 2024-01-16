@@ -191,7 +191,6 @@ function replaceTextWithElements(plugin: InlineFlashCardPlugin, ctx: MarkdownPos
 				Array.from(newNode.childNodes).forEach((child) => {
 					const childNode = child.cloneNode(true);
 					node.parentNode?.insertBefore(childNode, node);
-					console.log(childNode);
 					if (child && (childNode as HTMLElement).className && (childNode as HTMLElement).className.contains('input-mode')) {
 						(childNode as HTMLElement).find('input').oninput = (ev) => {
 							const value = (<HTMLInputElement>ev.target).value;
@@ -210,7 +209,6 @@ function replaceTextWithElements(plugin: InlineFlashCardPlugin, ctx: MarkdownPos
 				});
 
 			} else {
-				console.log(newNode);
 				node.parentNode?.insertBefore(newNode.cloneNode(true), node);
 			}
 		});
